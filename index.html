@@ -322,6 +322,7 @@ function renderBagian1(){
     <div class="card card-bagian1">
       <span class="section-tag">Suplemen · Minat Belajar &amp; Kegiatan Keagamaan (MK)</span>
       <p class="muted" style="font-size:13.5px;margin:-4px 0 14px;">Skor ini dilaporkan terpisah dari enam skor RIASEC di atas — mencerminkan ketertarikan pada aktivitas pembelajaran tambahan dan pelayanan keagamaan, bukan penilaian kualitas ibadah.</p>
+      <p class="muted" style="font-size:12.5px;margin:-8px 0 14px;">Kolom "Contoh kegiatan yang sesuai" boleh dikosongkan jika skormu di bawah 2 (kategori kurang). Jika skormu 2 ke atas (cukup/baik/sangat baik), kolom ini wajib diisi.</p>
       <div style="overflow-x:auto;">
       <table class="rank-table">
         <thead>
@@ -406,9 +407,28 @@ function renderBagian1(){
         <td><input type="text" placeholder="cth. rutin ikut kajian/tadarus di sekolah" id="mk-pengalaman" value="${escapeHTML(state.mk.pengalaman)}"></td>
       </tr>
   `;
-  content.querySelector('#mk-skor').oninput = e=>{ state.mk.skor = e.target.value; markField(e.target,null,false); };
+  function parseSkor(val){
+    const n = parseFloat(String(val).trim().replace(',', '.'));
+    return isNaN(n) ? null : n;
+  }
+  function mkPengalamanRequired(){
+    const n = parseSkor(state.mk.skor);
+    return n !== null && n >= 2.0; // kategori cukup ke atas
+  }
+
+  content.querySelector('#mk-skor').oninput = e=>{
+    state.mk.skor = e.target.value;
+    markField(e.target,null,false);
+    // skor berubah bisa mengubah status wajib/tidaknya kolom pengalaman
+    if(!mkPengalamanRequired()){
+      markField(content.querySelector('#mk-pengalaman'), null, false);
+    }
+  };
   content.querySelector('#mk-skor').addEventListener('blur', e=>{ markField(e.target,null, !state.mk.skor.trim()); });
-  content.querySelector('#mk-pengalaman').oninput = e=>{ state.mk.pengalaman = e.target.value; };
+  content.querySelector('#mk-pengalaman').oninput = e=>{ state.mk.pengalaman = e.target.value; markField(e.target,null,false); };
+  content.querySelector('#mk-pengalaman').addEventListener('blur', e=>{
+    markField(e.target, null, mkPengalamanRequired() && !state.mk.pengalaman.trim());
+  });
 
   function markField(el, errId, isInvalid){
     if(!el) return;
@@ -440,11 +460,17 @@ function renderBagian1(){
       markField(rankPengalaman[idx], null, pengalamanInvalid);
       if(tipeInvalid || skorInvalid || pengalamanInvalid) ok = false;
     });
-    const mkInvalid = !state.mk.skor.trim();
-    markField(content.querySelector('#mk-skor'), null, mkInvalid);
-    if(mkInvalid) ok = false;
+    const mkSkorInvalid = !state.mk.skor.trim();
+    markField(content.querySelector('#mk-skor'), null, mkSkorInvalid);
+    if(mkSkorInvalid) ok = false;
+
+    const mkPengalamanInvalid = mkPengalamanRequired() && !state.mk.pengalaman.trim();
+    markField(content.querySelector('#mk-pengalaman'), null, mkPengalamanInvalid);
+    if(mkPengalamanInvalid) ok = false;
+
     return ok;
   }
+
 
   function focusFirstInvalid(){
     const firstInvalid = content.querySelector('.invalid');
