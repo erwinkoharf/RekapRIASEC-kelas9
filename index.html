@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lembar Kerja & Refleksi RIASEC — Pertemuan 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F3EC;
+    --card:#FFFDF9;
+    --ink:#2B2A28;
+    --muted:#6E685F;
+    --line:#E4DDCF;
+    --accent:#2F6F63;
+    --accent-ink:#1D453D;
+    --accent-soft:#E1EEE9;
+    --r:#B5563C; --i:#3A6EA5; --a:#7B4B94; --s:#3F7D53; --e:#B9862B; --c:#55606E;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  #app{max-width:760px;margin:0 auto;padding:28px 20px 80px;}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:500;margin:0;letter-spacing:.2px;}
+  .eyebrow{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent-ink);font-weight:600;margin-bottom:8px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px 22px;margin-bottom:18px;}
+  .muted{color:var(--muted);}
+  small.muted{font-size:13px;}
+  label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px;}
+  input[type=text],input[type=number],select,textarea{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;
+    font-family:inherit;font-size:15px;background:#fff;color:var(--ink);
+  }
+  textarea{resize:vertical;min-height:64px;line-height:1.5;}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  input.invalid,select.invalid,textarea.invalid{border:2px solid #C0392B !important;background:#FDF2F1 !important;}
+  .field-error{font-size:12px;color:#C0392B;font-weight:600;margin-top:5px;display:none;}
+  .field-error.show{display:block;}
+  .field{margin-bottom:16px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    border:1px solid var(--accent);background:var(--accent);color:#fff;
+    padding:12px 22px;border-radius:9px;font-size:15px;font-weight:600;
+    cursor:pointer;font-family:inherit;transition:opacity .15s;
+  }
+  .btn:hover{opacity:.9;}
+  .btn.secondary{background:transparent;color:var(--accent-ink);border-color:var(--line);}
+  .btn.secondary:hover{background:var(--accent-soft);}
+  .btn.small{padding:8px 14px;font-size:13px;}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
+
+  .section-tag{
+    display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;
+    letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px;
+    margin-bottom:14px;background:var(--accent-soft);color:var(--accent-ink);
+  }
+  .timer{font-size:12px;color:var(--muted);font-weight:600;margin-left:6px;text-transform:none;letter-spacing:0;}
+
+  .rank-table{width:100%;border-collapse:collapse;}
+  .rank-table th{text-align:left;font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;padding:6px 8px;border-bottom:2px solid var(--line);}
+  .rank-table td{padding:8px;vertical-align:top;border-bottom:1px solid var(--line);}
+  .rank-num{
+    width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;
+  }
+  .rank-table td.num-cell{width:38px;}
+  .rank-table td.type-cell{width:150px;}
+  .rank-table td.score-cell{width:90px;}
+  .rank-table input,.rank-table select{padding:8px 9px;font-size:14px;}
+
+  .q-block{margin-bottom:18px;}
+  .q-block:last-child{margin-bottom:0;}
+  .q-num{
+    display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;
+    border-radius:50%;background:var(--accent-soft);color:var(--accent-ink);font-size:12px;font-weight:700;
+    margin-right:8px;flex-shrink:0;
+  }
+  .q-label{display:flex;align-items:flex-start;font-size:14.5px;font-weight:600;margin-bottom:8px;}
+  .q-optional{font-size:11px;font-weight:600;color:var(--e);background:#FBF0DD;padding:2px 8px;border-radius:8px;margin-left:8px;text-transform:none;letter-spacing:0;white-space:nowrap;}
+  .q-hint{font-size:12.5px;color:var(--muted);margin:-4px 0 8px 30px;}
+
+  .saved-badge{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--accent-ink);background:var(--accent-soft);padding:10px 14px;border-radius:9px;margin-bottom:16px;}
+  .saved-badge.warn{background:#F4EADA;color:#8A5A3B;}
+
+  .type-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;}
+
+  .stepper{display:flex;gap:8px;justify-content:center;margin-bottom:22px;}
+  .step-pill{
+    display:flex;align-items:center;gap:8px;padding:9px 18px;border-radius:20px;
+    font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--muted);
+    cursor:pointer;font-family:inherit;
+  }
+  .step-pill .step-num{
+    width:20px;height:20px;border-radius:50%;background:var(--line);color:var(--muted);
+    display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+  }
+  .step-pill.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .step-pill.active .step-num{background:#fff;color:var(--accent);}
+  .step-pill.done .step-num{background:var(--accent-soft);color:var(--accent-ink);}
+
+  .identity-summary{
+    display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--ink);
+    background:var(--accent-soft);border-radius:9px;padding:12px 16px;margin-bottom:18px;
+  }
+  .identity-summary b{font-weight:700;}
+  .identity-summary a{color:var(--accent-ink);font-weight:600;text-decoration:underline;cursor:pointer;margin-left:auto;}
+
+  @media print{
+    body{background:#fff;}
+    .no-print{display:none !important;}
+    .card{border:none;}
+    body.print-b1 .card-bagian2{display:none !important;}
+    body.print-b2 .card-bagian1{display:none !important;}
+  }
+  @media (max-width:560px){
+    .row2,.row3{grid-template-columns:1fr;}
+    .rank-table{font-size:13px;}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* =====================================================================
+   KONFIGURASI GOOGLE SHEETS
+   1. Buat Google Sheet baru, buka menu Extensions > Apps Script.
+   2. Tempel kode dari file "Kode_Apps_Script_GoogleSheets.gs" yang
+      dikirimkan bersama file ini, lalu Deploy > New deployment > Web app
+      (Execute as: Me, Who has access: Anyone).
+   3. Salin URL hasil deploy (diakhiri /exec), tempel di antara tanda
+      kutip di bawah ini.
+   4. Kosongkan ('') jika belum mau memakai Google Sheets — data akan
+      tetap tersimpan di perangkat (localStorage) seperti biasa.
+===================================================================== */
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxOCLe6BZviUO-FDteMrGyZOP0-cls4cAGVbDfpk3kvjhVeug6ZdafC5kI3O2TAVz3zBg/exec';
+
+async function sendToGoogleSheets(type, payload){
+  if(!GOOGLE_SCRIPT_URL.trim()) return { sent:false, reason:'not-configured' };
+  try{
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ type, ...payload })
+    });
+    // mode 'no-cors' tidak mengizinkan membaca isi respons, jadi kita anggap
+    // terkirim selama fetch tidak melempar error jaringan.
+    return { sent:true };
+  }catch(err){
+    console.error('Gagal mengirim ke Google Sheets:', err);
+    return { sent:false, reason:'network-error' };
+  }
+}
+
+const TYPE_COLORS = {Realistic:'var(--r)',Investigative:'var(--i)',Artistic:'var(--a)',Social:'var(--s)',Enterprising:'var(--e)',Conventional:'var(--c)'};
+const TYPE_OPTIONS = ['','Realistic','Investigative','Artistic','Social','Enterprising','Conventional'];
+const KELAS_OPTIONS = ['9A','9B','9C','9D','9E','9F','9G','9H','9I','9J'];
+
+const REFLECTION_QUESTIONS = [
+  { text: 'Dari 3 minat teratasmu, kegiatan apa yang paling sering kamu lakukan sebulan terakhir?' },
+  { text: 'Apakah hasil ini sesuai dengan yang kamu rasakan selama ini? Bagian mana yang bikin kamu kaget?', hint: 'Maksudnya: coba bandingkan hasil angket dengan apa yang kamu tahu tentang dirimu sendiri. Ada bagian yang pas banget? Ada juga yang bikin kamu mikir, "lho, kok gini?"' },
+  { text: 'Ceritakan satu pengalaman nyatamu (di sekolah, rumah, atau kegiatan lain) yang cocok dengan Minat #1 (minat tertinggimu).' },
+  { text: 'Kalau ada beberapa minatmu yang skornya mirip (profil campuran), dan kamu cuma boleh pilih satu untuk didalami minggu ini, kamu pilih yang mana? Kenapa?', optional: true, hint: 'Lewati kalau hasil minatmu cuma ada satu yang paling menonjol.' },
+  { text: 'Selain 3 minat teratas tadi, ada nggak minat lain yang sebenarnya ingin kamu coba? Kenapa?' },
+  { text: 'Kamu punya cita-cita atau pekerjaan impian? Apakah itu cocok dengan hasil di atas?' },
+  { text: 'Pelajaran atau ekskul apa di sekolah yang paling cocok dengan hasil ini?' },
+  { text: 'Ada hal baru yang ingin kamu coba setelah lihat hasil ini?' },
+  { text: 'Ada yang ingin kamu tanyakan ke guru BK soal hasil ini?' },
+];
+
+let state = {
+  screen:'bagian1',
+  student:{nama:'',noInduk:'',kelas:'',absen:''},
+  ranks:[
+    {tipe:'',skor:'',pengalaman:''},
+    {tipe:'',skor:'',pengalaman:''},
+    {tipe:'',skor:'',pengalaman:''}
+  ],
+  mk:{skor:'',pengalaman:''},
+  reflections: REFLECTION_QUESTIONS.map(()=>''),
+  lastResult1:null,
+  lastResult2:null,
+  progressStatus:null
+};
+
+function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstElementChild; }
+function escapeHTML(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function identityValid(){
+  return state.student.nama.trim() && /^\d{4}$/.test(state.student.noInduk.trim()) && state.student.kelas.trim() && state.student.absen.trim();
+}
+function printScoped(cls){
+  document.body.classList.add(cls);
+  window.print();
+  setTimeout(()=>document.body.classList.remove(cls), 500);
+}
+
+const PROGRESS_PREFIX = 'riasec_progress_';
+function progressKey(noInduk){ return PROGRESS_PREFIX + noInduk.trim(); }
+function saveProgress(){
+  if(!state.student.noInduk.trim()) return;
+  try{
+    const data = {
+      student: state.student,
+      ranks: state.ranks,
+      mk: state.mk,
+      reflections: state.reflections,
+      lastResult1: state.lastResult1,
+      lastResult2: state.lastResult2,
+    };
+    localStorage.setItem(progressKey(state.student.noInduk), JSON.stringify(data));
+  }catch(e){ console.error('Gagal menyimpan progres di perangkat ini:', e); }
+}
+function loadProgress(noInduk){
+  if(!noInduk || !noInduk.trim()) return null;
+  try{
+    const raw = localStorage.getItem(progressKey(noInduk));
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+
+function render(){
+  const app = document.getElementById('app');
+  if(state.screen==='bagian1') app.replaceChildren(renderBagian1());
+  else if(state.screen==='bagian2') app.replaceChildren(renderBagian2());
+  else if(state.screen==='done1') app.replaceChildren(renderDone1());
+  else if(state.screen==='done2') app.replaceChildren(renderDone2());
+}
+
+function goToScreen(screenName){
+  state.screen = screenName;
+  render();
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+function renderStepper(current, onBeforeNext){
+  const wrap = el(`<div class="stepper no-print"></div>`);
+  const b1 = el(`<button type="button" class="step-pill ${current===1?'active':(state.lastResult1?'done':'')}"><span class="step-num">${state.lastResult1 && current!==1 ? '✓' : '1'}</span> Bagian 1</button>`);
+  const b2 = el(`<button type="button" class="step-pill ${current===2?'active':(state.lastResult2?'done':'')}"><span class="step-num">${state.lastResult2 && current!==2 ? '✓' : '2'}</span> Bagian 2</button>`);
+  b1.onclick = ()=>{ goToScreen('bagian1'); };
+  b2.onclick = ()=>{
+    if(current===1 && typeof onBeforeNext==='function'){
+      if(!onBeforeNext()) return;
+    } else if(!identityValid()){
+      alert('Mohon lengkapi Identitas (nama, No. Induk 4 angka, kelas, dan nomor absen) di Bagian 1 terlebih dahulu.');
+      return;
+    }
+    goToScreen('bagian2');
+  };
+  wrap.appendChild(b1);
+  wrap.appendChild(b2);
+  return wrap;
+}
+
+function renderBagian1(){
+  const wrap = el(`<div></div>`);
+  const content = el(`<div></div>`);
+  content.innerHTML = `
+    <div style="text-align:center;padding:0 0 22px;">
+      <div class="eyebrow">Bimbingan Karir · Pertemuan 4 · SMP</div>
+      <h1 style="font-size:26px;">Lembar Kerja &amp; Refleksi RIASEC</h1>
+      <p class="muted" style="max-width:520px;margin:10px auto 0;font-size:14.5px;">
+        Siapkan hasil cetak Profil Eksploratif Minat RIASEC milikmu, lalu pindahkan tiga skor tertinggi ke tabel di bawah.
+      </p>
+    </div>
+
+    <div class="card card-identitas">
+      <h3 style="font-size:16px;margin-bottom:4px;">Identitas <span class="q-optional" style="color:var(--accent-ink);background:var(--accent-soft);">Wajib diisi</span></h3>
+      <p class="muted" style="font-size:12.5px;margin:0 0 14px;">Identitas ini terhubung ke Bagian 1 dan Bagian 2 — isi dulu sebelum menyimpan salah satu bagian. No. Induk juga dipakai untuk memuat ulang pekerjaanmu jika kamu lanjut di lain waktu, di perangkat/browser yang sama.</p>
+      ${state.progressStatus==='found' ? `<div class="saved-badge no-print">✓ Data sebelumnya untuk No. Induk ini ditemukan dan sudah dimuat. Bagian yang sudah pernah disimpan ditandai pada langkah di atas.</div>` : ''}
+      ${state.progressStatus==='notfound' ? `<div class="saved-badge no-print" style="background:#F4EADA;color:#8A5A3B;">Belum ada data tersimpan untuk No. Induk ini di perangkat ini — silakan mulai isi dari Bagian 1.</div>` : ''}
+      <div class="field">
+        <label for="f-nama">Nama lengkap</label>
+        <input type="text" id="f-nama" placeholder="Nama sesuai absensi" value="${escapeHTML(state.student.nama)}">
+        <div class="field-error" id="err-nama">Nama wajib diisi.</div>
+      </div>
+      <div class="row3">
+        <div class="field">
+          <label for="f-induk">No. Induk (4 angka)</label>
+          <input type="text" id="f-induk" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="cth. 1045" value="${escapeHTML(state.student.noInduk)}">
+          <div class="field-error" id="err-induk">No. Induk wajib diisi (4 angka).</div>
+        </div>
+        <div class="field">
+          <label for="f-kelas">Kelas</label>
+          <select id="f-kelas">
+            <option value="">Pilih kelas...</option>
+            ${KELAS_OPTIONS.map(k=>`<option value="${k}" ${state.student.kelas===k?'selected':''}>${k}</option>`).join('')}
+          </select>
+          <div class="field-error" id="err-kelas">Kelas wajib dipilih.</div>
+        </div>
+        <div class="field">
+          <label for="f-absen">No. Absen</label>
+          <input type="number" id="f-absen" placeholder="cth. 12" value="${escapeHTML(state.student.absen)}">
+          <div class="field-error" id="err-absen">No. Absen wajib diisi.</div>
+        </div>
+      </div>
+      <button class="btn secondary small no-print" id="btn-load-progress" type="button">Muat Data Tersimpan (berdasarkan No. Induk)</button>
+    </div>
+
+    <div class="card card-bagian1">
+      <span class="section-tag">Bagian 1 · Salin dari Hasil Angket <span class="timer">8 menit</span></span>
+      <p class="muted" style="font-size:13.5px;margin:-4px 0 14px;">Tuliskan tiga skor RIASEC tertinggi milikmu dari hasil cetak. Hasil ini menunjukkan kegiatan yang relatif kamu sukai — bukan penentu satu sekolah atau pekerjaan.</p>
+      <div style="overflow-x:auto;">
+      <table class="rank-table">
+        <thead>
+          <tr><th>Urutan</th><th>Tipe RIASEC</th><th>Skor rata-rata</th><th>Contoh pengalaman yang sesuai</th></tr>
+        </thead>
+        <tbody id="rank-body"></tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="card card-bagian1">
+      <span class="section-tag">Suplemen · Minat Belajar &amp; Kegiatan Keagamaan (MK)</span>
+      <p class="muted" style="font-size:13.5px;margin:-4px 0 14px;">Skor ini dilaporkan terpisah dari enam skor RIASEC di atas — mencerminkan ketertarikan pada aktivitas pembelajaran tambahan dan pelayanan keagamaan, bukan penilaian kualitas ibadah.</p>
+      <div style="overflow-x:auto;">
+      <table class="rank-table">
+        <thead>
+          <tr><th>Skor rata-rata</th><th>Contoh kegiatan yang sesuai</th></tr>
+        </thead>
+        <tbody id="mk-body"></tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="btn-row card-bagian1">
+      <button class="btn" id="btn-submit-b1">Selesai — Data Tersimpan</button>
+      <button class="btn secondary no-print" id="btn-print-b1">Cetak / Simpan PDF (Bagian 1)</button>
+      <button class="btn secondary no-print" id="btn-next">Lanjut ke Bagian 2 →</button>
+    </div>
+  `;
+  wrap.appendChild(content);
+
+  content.querySelector('#f-nama').oninput = e=>{ state.student.nama = e.target.value; markField(e.target,'err-nama',false); };
+  content.querySelector('#f-nama').addEventListener('blur', e=>{ markField(e.target,'err-nama', !state.student.nama.trim()); });
+  content.querySelector('#f-induk').oninput = e=>{
+    const digitsOnly = e.target.value.replace(/\D/g,'').slice(0,4);
+    e.target.value = digitsOnly;
+    state.student.noInduk = digitsOnly;
+    markField(e.target,'err-induk',false);
+  };
+  content.querySelector('#f-kelas').onchange = e=>{ state.student.kelas = e.target.value; markField(e.target,'err-kelas', !e.target.value.trim()); };
+  content.querySelector('#f-absen').oninput = e=>{ state.student.absen = e.target.value; markField(e.target,'err-absen',false); };
+  content.querySelector('#f-absen').addEventListener('blur', e=>{ markField(e.target,'err-absen', !state.student.absen.trim()); });
+
+  function tryLoadProgress(){
+    const noInduk = state.student.noInduk;
+    markField(content.querySelector('#f-induk'), 'err-induk', !/^\d{4}$/.test(noInduk.trim()));
+    if(!noInduk.trim()) return;
+    const data = loadProgress(noInduk);
+    if(data){
+      state.student = data.student || state.student;
+      state.ranks = data.ranks || state.ranks;
+      state.mk = data.mk || state.mk;
+      state.reflections = data.reflections || state.reflections;
+      state.lastResult1 = data.lastResult1 || null;
+      state.lastResult2 = data.lastResult2 || null;
+      state.progressStatus = 'found';
+    } else {
+      state.progressStatus = 'notfound';
+    }
+    render();
+  }
+  content.querySelector('#f-induk').addEventListener('blur', tryLoadProgress);
+  content.querySelector('#btn-load-progress').onclick = tryLoadProgress;
+
+  const rankBody = content.querySelector('#rank-body');
+  rankBody.innerHTML = state.ranks.map((row,idx)=>`
+      <tr>
+        <td class="num-cell"><span class="rank-num">${idx+1}</span></td>
+        <td class="type-cell">
+          <select data-idx="${idx}" class="sel-tipe">
+            ${TYPE_OPTIONS.map(t=>`<option value="${t}" ${row.tipe===t?'selected':''}>${t||'Pilih tipe...'}</option>`).join('')}
+          </select>
+        </td>
+        <td class="score-cell"><input type="text" inputmode="decimal" placeholder="cth. 3.00" data-idx="${idx}" class="inp-skor" value="${escapeHTML(row.skor)}"></td>
+        <td><input type="text" placeholder="cth. senang ikut lomba karya ilmiah" data-idx="${idx}" class="inp-pengalaman" value="${escapeHTML(row.pengalaman)}"></td>
+      </tr>
+  `).join('');
+  rankBody.querySelectorAll('.sel-tipe').forEach(s=>{
+    s.onchange = e=>{ state.ranks[e.target.dataset.idx].tipe = e.target.value; markField(e.target,null, !e.target.value); };
+    s.addEventListener('blur', e=>{ markField(e.target,null, !state.ranks[e.target.dataset.idx].tipe); });
+  });
+  rankBody.querySelectorAll('.inp-skor').forEach(s=>{
+    s.oninput = e=>{ state.ranks[e.target.dataset.idx].skor = e.target.value; markField(e.target,null,false); };
+    s.addEventListener('blur', e=>{ markField(e.target,null, !state.ranks[e.target.dataset.idx].skor.trim()); });
+  });
+  rankBody.querySelectorAll('.inp-pengalaman').forEach(s=>{
+    s.oninput = e=>{ state.ranks[e.target.dataset.idx].pengalaman = e.target.value; markField(e.target,null,false); };
+    s.addEventListener('blur', e=>{ markField(e.target,null, !state.ranks[e.target.dataset.idx].pengalaman.trim()); });
+  });
+
+  const mkBody = content.querySelector('#mk-body');
+  mkBody.innerHTML = `
+      <tr>
+        <td class="score-cell"><input type="text" inputmode="decimal" placeholder="cth. 2.43" id="mk-skor" value="${escapeHTML(state.mk.skor)}"></td>
+        <td><input type="text" placeholder="cth. rutin ikut kajian/tadarus di sekolah" id="mk-pengalaman" value="${escapeHTML(state.mk.pengalaman)}"></td>
+      </tr>
+  `;
+  content.querySelector('#mk-skor').oninput = e=>{ state.mk.skor = e.target.value; markField(e.target,null,false); };
+  content.querySelector('#mk-skor').addEventListener('blur', e=>{ markField(e.target,null, !state.mk.skor.trim()); });
+  content.querySelector('#mk-pengalaman').oninput = e=>{ state.mk.pengalaman = e.target.value; };
+
+  function markField(el, errId, isInvalid){
+    if(!el) return;
+    el.classList.toggle('invalid', isInvalid);
+    const errEl = errId ? content.querySelector('#'+errId) : null;
+    if(errEl) errEl.classList.toggle('show', isInvalid);
+  }
+
+  function validateIdentity(){
+    let ok = true;
+    if(!state.student.nama.trim()){ markField(content.querySelector('#f-nama'),'err-nama',true); ok = false; } else markField(content.querySelector('#f-nama'),'err-nama',false);
+    if(!/^\d{4}$/.test(state.student.noInduk.trim())){ markField(content.querySelector('#f-induk'),'err-induk',true); ok = false; } else markField(content.querySelector('#f-induk'),'err-induk',false);
+    if(!state.student.kelas.trim()){ markField(content.querySelector('#f-kelas'),'err-kelas',true); ok = false; } else markField(content.querySelector('#f-kelas'),'err-kelas',false);
+    if(!state.student.absen.trim()){ markField(content.querySelector('#f-absen'),'err-absen',true); ok = false; } else markField(content.querySelector('#f-absen'),'err-absen',false);
+    return ok;
+  }
+
+  function validateBagian1Fields(){
+    let ok = true;
+    const rankSelects = content.querySelectorAll('.sel-tipe');
+    const rankSkors = content.querySelectorAll('.inp-skor');
+    const rankPengalaman = content.querySelectorAll('.inp-pengalaman');
+    state.ranks.forEach((r,idx)=>{
+      const tipeInvalid = !r.tipe;
+      const skorInvalid = !r.skor.trim();
+      const pengalamanInvalid = !r.pengalaman.trim();
+      markField(rankSelects[idx], null, tipeInvalid);
+      markField(rankSkors[idx], null, skorInvalid);
+      markField(rankPengalaman[idx], null, pengalamanInvalid);
+      if(tipeInvalid || skorInvalid || pengalamanInvalid) ok = false;
+    });
+    const mkInvalid = !state.mk.skor.trim();
+    markField(content.querySelector('#mk-skor'), null, mkInvalid);
+    if(mkInvalid) ok = false;
+    return ok;
+  }
+
+  function focusFirstInvalid(){
+    const firstInvalid = content.querySelector('.invalid');
+    if(firstInvalid) firstInvalid.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  content.querySelector('#btn-submit-b1').onclick = async ()=>{
+    const identityOk = validateIdentity();
+    const bagian1Ok = validateBagian1Fields();
+    if(!identityOk || !bagian1Ok){
+      alert('Ada kolom wajib yang masih kosong (ditandai garis merah). Mohon lengkapi dulu.');
+      focusFirstInvalid();
+      return;
+    }
+    state.lastResult1 = {
+      student: {...state.student},
+      date: new Date().toISOString().slice(0,10),
+      ranks: state.ranks.map(r=>({...r})),
+      mk: {...state.mk},
+    };
+    saveProgress();
+    const sheetsResult1 = await sendToGoogleSheets('bagian1', state.lastResult1);
+    state.lastResult1.sheetsSent = sheetsResult1.sent;
+    goToScreen('done1');
+  };
+  content.querySelector('#btn-print-b1').onclick = ()=>{
+    if(!validateIdentity()){
+      alert('Mohon lengkapi Identitas (nama, No. Induk 4 angka, kelas, dan nomor absen) terlebih dahulu.');
+      focusFirstInvalid();
+      return;
+    }
+    printScoped('print-b1');
+  };
+  content.querySelector('#btn-next').onclick = ()=>{
+    const identityOk = validateIdentity();
+    const bagian1Ok = validateBagian1Fields();
+    if(!identityOk || !bagian1Ok){
+      alert('Ada kolom wajib yang masih kosong (ditandai garis merah) di Bagian 1. Mohon lengkapi dulu sebelum lanjut ke Bagian 2.');
+      focusFirstInvalid();
+      return;
+    }
+    goToScreen('bagian2');
+  };
+
+  wrap.prepend(renderStepper(1, ()=>{
+    const ok = validateIdentity() && validateBagian1Fields();
+    if(!ok){
+      alert('Ada kolom wajib yang masih kosong (ditandai garis merah) di Bagian 1. Mohon lengkapi dulu sebelum lanjut ke Bagian 2.');
+      focusFirstInvalid();
+    }
+    return ok;
+  }));
+
+  return wrap;
+}
+
+function renderBagian2(){
+  const wrap = el(`<div></div>`);
+  wrap.appendChild(renderStepper(2));
+  const content = el(`<div></div>`);
+  content.innerHTML = `
+    <div style="text-align:center;padding:0 0 22px;">
+      <div class="eyebrow">Bimbingan Karir · Pertemuan 4 · SMP</div>
+      <h1 style="font-size:26px;">Pertanyaan Refleksi</h1>
+      <p class="muted" style="max-width:520px;margin:10px auto 0;font-size:14.5px;">
+        Diisi setelah membaca hasil angket, sebagai bahan diskusi bersama guru BK. Jawab sejujur mungkin.
+      </p>
+    </div>
+
+    <div class="identity-summary no-print">
+      <span><b>${escapeHTML(state.student.nama) || '(nama belum diisi)'}</b></span>
+      <span>No. Induk ${escapeHTML(state.student.noInduk) || '—'}</span>
+      <span>${escapeHTML(state.student.kelas) || '—'}</span>
+      <span>Absen ${escapeHTML(state.student.absen) || '—'}</span>
+      <a id="link-edit-identity">Ubah identitas</a>
+    </div>
+
+    <div class="card card-bagian2">
+      <span class="section-tag">Bagian 2 · Pertanyaan Refleksi</span>
+      <div id="reflection-body"></div>
+    </div>
+
+    <div class="btn-row card-bagian2">
+      <button class="btn" id="btn-submit-b2">Simpan &amp; Lihat Ringkasan (Bagian 2)</button>
+      <button class="btn secondary no-print" id="btn-print-b2">Cetak / Simpan PDF (Bagian 2)</button>
+      <button class="btn secondary no-print" id="btn-prev">← Kembali ke Bagian 1</button>
+    </div>
+  `;
+  wrap.appendChild(content);
+
+  content.querySelector('#link-edit-identity').onclick = ()=>{ goToScreen('bagian1'); };
+  content.querySelector('#btn-prev').onclick = ()=>{ goToScreen('bagian1'); };
+
+  const reflBody = content.querySelector('#reflection-body');
+  REFLECTION_QUESTIONS.forEach((q,idx)=>{
+    const block = el(`
+      <div class="q-block">
+        <div class="q-label"><span class="q-num">${idx+1}</span><span>${escapeHTML(q.text)}${q.optional ? '<span class="q-optional">Boleh dilewati</span>' : ''}</span></div>
+        ${q.hint ? `<div class="q-hint">${escapeHTML(q.hint)}</div>` : ''}
+        <textarea data-idx="${idx}" placeholder="Tulis jawabanmu di sini...">${escapeHTML(state.reflections[idx])}</textarea>
+      </div>
+    `);
+    const ta = block.querySelector('textarea');
+    ta.oninput = e=>{
+      state.reflections[e.target.dataset.idx] = e.target.value;
+      if(!q.optional) markField(e.target, null, false);
+    };
+    if(!q.optional){
+      ta.addEventListener('blur', e=>{ markField(e.target, null, !state.reflections[idx].trim()); });
+    }
+    reflBody.appendChild(block);
+  });
+
+  function markField(el, errId, isInvalid){
+    if(!el) return;
+    el.classList.toggle('invalid', isInvalid);
+    const errEl = errId ? content.querySelector('#'+errId) : null;
+    if(errEl) errEl.classList.toggle('show', isInvalid);
+  }
+
+  function validateReflections(){
+    let ok = true;
+    const textareas = content.querySelectorAll('#reflection-body textarea');
+    REFLECTION_QUESTIONS.forEach((q,idx)=>{
+      if(q.optional) return;
+      const invalid = !state.reflections[idx].trim();
+      markField(textareas[idx], null, invalid);
+      if(invalid) ok = false;
+    });
+    return ok;
+  }
+
+  function focusFirstInvalid(){
+    const firstInvalid = content.querySelector('.invalid');
+    if(firstInvalid) firstInvalid.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  content.querySelector('#btn-submit-b2').onclick = async ()=>{
+    if(!identityValid()){
+      alert('Mohon lengkapi Identitas (nama, No. Induk 4 angka, kelas, dan nomor absen) terlebih dahulu — dibutuhkan untuk Bagian 1 dan Bagian 2.');
+      goToScreen('bagian1');
+      return;
+    }
+    if(!validateReflections()){
+      alert('Ada pertanyaan refleksi wajib yang masih kosong (ditandai garis merah). Mohon lengkapi dulu — kecuali pertanyaan #4 yang boleh dilewati.');
+      focusFirstInvalid();
+      return;
+    }
+    state.lastResult2 = {
+      student: {...state.student},
+      date: new Date().toISOString().slice(0,10),
+      reflections: [...state.reflections],
+    };
+    saveProgress();
+    const sheetsResult2 = await sendToGoogleSheets('bagian2', state.lastResult2);
+    state.lastResult2.sheetsSent = sheetsResult2.sent;
+    goToScreen('done2');
+  };
+  content.querySelector('#btn-print-b2').onclick = ()=>{
+    if(!identityValid()){
+      alert('Mohon lengkapi Identitas (nama, No. Induk 4 angka, kelas, dan nomor absen) terlebih dahulu.');
+      return;
+    }
+    printScoped('print-b2');
+  };
+
+  return wrap;
+}
+
+function renderDone1(){
+  const r = state.lastResult1;
+  const wrap = el(`<div></div>`);
+  const rankRows = r.ranks.map((row,idx)=>{
+    const color = TYPE_COLORS[row.tipe] || 'var(--muted)';
+    return `
+      <div style="display:flex;gap:12px;padding:12px 0;border-top:${idx===0?'none':'1px solid var(--line)'};">
+        <span class="rank-num" style="flex-shrink:0;">${idx+1}</span>
+        <div>
+          <div style="font-weight:600;font-size:14.5px;"><span class="type-dot" style="background:${color};"></span>${escapeHTML(row.tipe)} — <span style="font-family:'Fraunces',serif;">${escapeHTML(row.skor)}</span></div>
+          <div class="muted" style="font-size:13.5px;margin-top:3px;">${escapeHTML(row.pengalaman)}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  wrap.innerHTML = `
+    <div style="text-align:center;padding:14px 0 20px;">
+      <div class="eyebrow">Ringkasan Bagian 1</div>
+      <h1 style="font-size:26px;">${escapeHTML(r.student.nama)}</h1>
+      <small class="muted">No. Induk ${escapeHTML(r.student.noInduk) || '—'} · ${escapeHTML(r.student.kelas)} · Absen ${escapeHTML(r.student.absen)} · ${r.date}</small>
+    </div>
+
+    <div class="saved-badge no-print">✓ Bagian 1 selesai dan tersimpan di perangkat ini. Kamu boleh menutup halaman ini sekarang. Untuk lanjut ke Bagian 2 lain waktu, buka kembali file ini lalu isi ulang Nama, No. Induk (harus <b>${escapeHTML(r.student.noInduk)}</b>, sama seperti sekarang), Kelas, dan Absen — data Bagian 1 ini akan otomatis termuat.</div>
+    ${GOOGLE_SCRIPT_URL.trim() ? (r.sheetsSent ? `<div class="saved-badge no-print">✓ Data juga terkirim ke Google Sheets guru BK.</div>` : `<div class="saved-badge warn no-print">⚠ Gagal mengirim ke Google Sheets (mungkin tidak ada koneksi internet). Data tetap aman tersimpan di perangkat ini.</div>`) : ''}
+
+    <div class="card">
+      <h3 style="font-size:16px;margin-bottom:4px;">Profil Minatku</h3>
+      ${rankRows}
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:16px;margin-bottom:4px;">Suplemen: Minat Belajar &amp; Kegiatan Keagamaan</h3>
+      <div style="display:flex;gap:12px;padding:12px 0;">
+        <div>
+          <div style="font-weight:600;font-size:14.5px;">Skor rata-rata: <span style="font-family:'Fraunces',serif;">${escapeHTML(r.mk.skor) || '—'}</span></div>
+          <div class="muted" style="font-size:13.5px;margin-top:3px;">${escapeHTML(r.mk.pengalaman) || '<span class="muted">(tidak diisi)</span>'}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row no-print">
+      <button class="btn" id="btn-print">Cetak / Simpan PDF</button>
+      <button class="btn secondary" id="btn-back">Kembali ke Lembar Kerja</button>
+      <button class="btn secondary" id="btn-new">Isi untuk Siswa Berikutnya</button>
+    </div>
+  `;
+
+  wrap.querySelector('#btn-print').onclick = ()=>window.print();
+  wrap.querySelector('#btn-back').onclick = ()=>{ goToScreen('bagian1'); };
+  wrap.querySelector('#btn-new').onclick = ()=>{ resetAll(); };
+
+  return wrap;
+}
+
+function renderDone2(){
+  const r = state.lastResult2;
+  const wrap = el(`<div></div>`);
+  const reflBlocks = REFLECTION_QUESTIONS.map((q,idx)=>`
+    <div class="q-block">
+      <div class="q-label"><span class="q-num">${idx+1}</span><span>${escapeHTML(q.text)}${q.optional ? '<span class="q-optional">Boleh dilewati</span>' : ''}</span></div>
+      <p style="margin:0;font-size:14.5px;padding-left:30px;">${escapeHTML(r.reflections[idx]) || '<span class="muted">(tidak diisi)</span>'}</p>
+    </div>
+  `).join('');
+
+  wrap.innerHTML = `
+    <div style="text-align:center;padding:14px 0 20px;">
+      <div class="eyebrow">Ringkasan Bagian 2</div>
+      <h1 style="font-size:26px;">${escapeHTML(r.student.nama)}</h1>
+      <small class="muted">No. Induk ${escapeHTML(r.student.noInduk) || '—'} · ${escapeHTML(r.student.kelas)} · Absen ${escapeHTML(r.student.absen)} · ${r.date}</small>
+    </div>
+
+    <div class="saved-badge no-print">Bagian 2 sudah tersimpan. Klik "Cetak / Simpan PDF" untuk menyimpan sebagai file, lalu kirimkan ke guru BK.</div>
+    ${GOOGLE_SCRIPT_URL.trim() ? (r.sheetsSent ? `<div class="saved-badge no-print">✓ Data juga terkirim ke Google Sheets guru BK.</div>` : `<div class="saved-badge warn no-print">⚠ Gagal mengirim ke Google Sheets (mungkin tidak ada koneksi internet). Data tetap aman tersimpan di perangkat ini.</div>`) : ''}
+
+    <div class="card">
+      <h3 style="font-size:16px;margin-bottom:8px;">Pertanyaan Refleksi</h3>
+      ${reflBlocks}
+    </div>
+
+    <div class="btn-row no-print">
+      <button class="btn" id="btn-print">Cetak / Simpan PDF</button>
+      <button class="btn secondary" id="btn-back">Kembali ke Lembar Kerja</button>
+      <button class="btn secondary" id="btn-new">Isi untuk Siswa Berikutnya</button>
+    </div>
+  `;
+
+  wrap.querySelector('#btn-print').onclick = ()=>window.print();
+  wrap.querySelector('#btn-back').onclick = ()=>{ goToScreen('bagian2'); };
+  wrap.querySelector('#btn-new').onclick = ()=>{ resetAll(); };
+
+  return wrap;
+}
+
+function resetAll(){
+  state = {
+    screen:'bagian1',
+    student:{nama:'',noInduk:'',kelas:'',absen:''},
+    ranks:[{tipe:'',skor:'',pengalaman:''},{tipe:'',skor:'',pengalaman:''},{tipe:'',skor:'',pengalaman:''}],
+    mk:{skor:'',pengalaman:''},
+    reflections: REFLECTION_QUESTIONS.map(()=>''),
+    lastResult1:null,
+    lastResult2:null,
+    progressStatus:null
+  };
+  render();
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+render();
+</script>
+</body>
+</html>
