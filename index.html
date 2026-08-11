@@ -451,7 +451,9 @@ function renderBagian1(){
     if(firstInvalid) firstInvalid.scrollIntoView({behavior:'smooth', block:'center'});
   }
 
-  content.querySelector('#btn-submit-b1').onclick = async ()=>{
+  content.querySelector('#btn-submit-b1').onclick = async (e)=>{
+    const btn = e.currentTarget;
+    if(btn.disabled) return;
     const identityOk = validateIdentity();
     const bagian1Ok = validateBagian1Fields();
     if(!identityOk || !bagian1Ok){
@@ -459,6 +461,8 @@ function renderBagian1(){
       focusFirstInvalid();
       return;
     }
+    btn.disabled = true;
+    btn.textContent = 'Menyimpan...';
     state.lastResult1 = {
       student: {...state.student},
       date: new Date().toISOString().slice(0,10),
@@ -582,7 +586,9 @@ function renderBagian2(){
     if(firstInvalid) firstInvalid.scrollIntoView({behavior:'smooth', block:'center'});
   }
 
-  content.querySelector('#btn-submit-b2').onclick = async ()=>{
+  content.querySelector('#btn-submit-b2').onclick = async (e)=>{
+    const btn = e.currentTarget;
+    if(btn.disabled) return;
     if(!identityValid()){
       alert('Mohon lengkapi Identitas (nama, No. Induk 4 angka, kelas, dan nomor absen) terlebih dahulu — dibutuhkan untuk Bagian 1 dan Bagian 2.');
       goToScreen('bagian1');
@@ -593,6 +599,8 @@ function renderBagian2(){
       focusFirstInvalid();
       return;
     }
+    btn.disabled = true;
+    btn.textContent = 'Menyimpan...';
     state.lastResult2 = {
       student: {...state.student},
       date: new Date().toISOString().slice(0,10),
