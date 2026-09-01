@@ -108,13 +108,6 @@
   .step-pill.active .step-num{background:#fff;color:var(--accent);}
   .step-pill.done .step-num{background:var(--accent-soft);color:var(--accent-ink);}
 
-  .identity-summary{
-    display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--ink);
-    background:var(--accent-soft);border-radius:9px;padding:12px 16px;margin-bottom:18px;
-  }
-  .identity-summary b{font-weight:700;}
-  .identity-summary a{color:var(--accent-ink);font-weight:600;text-decoration:underline;cursor:pointer;margin-left:auto;}
-
   @media print{
     body{background:#fff;}
     .no-print{display:none !important;}
@@ -243,20 +236,12 @@ function goToScreen(screenName){
   window.scrollTo({top:0, behavior:'instant'});
 }
 
-function renderStepper(current, onBeforeNext){
+function renderStepper(current){
   const wrap = el(`<div class="stepper no-print"></div>`);
   const b1 = el(`<button type="button" class="step-pill ${current===1?'active':(state.lastResult1?'done':'')}"><span class="step-num">${state.lastResult1 && current!==1 ? '✓' : '1'}</span> Bagian 1</button>`);
   const b2 = el(`<button type="button" class="step-pill ${current===2?'active':(state.lastResult2?'done':'')}"><span class="step-num">${state.lastResult2 && current!==2 ? '✓' : '2'}</span> Bagian 2</button>`);
   b1.onclick = ()=>{ goToScreen('bagian1'); };
-  b2.onclick = ()=>{
-    if(current===1 && typeof onBeforeNext==='function'){
-      if(!onBeforeNext()) return;
-    } else if(!identityValid()){
-      alert('Mohon lengkapi Identitas (nama, No. Induk 4 angka, kelas, dan nomor absen) di Bagian 1 terlebih dahulu.');
-      return;
-    }
-    goToScreen('bagian2');
-  };
+  b2.onclick = ()=>{ goToScreen('bagian2'); };
   wrap.appendChild(b1);
   wrap.appendChild(b2);
   return wrap;
@@ -276,7 +261,7 @@ function renderBagian1(){
 
     <div class="card card-identitas">
       <h3 style="font-size:16px;margin-bottom:4px;">Identitas <span class="q-optional" style="color:var(--accent-ink);background:var(--accent-soft);">Wajib diisi</span></h3>
-      <p class="muted" style="font-size:12.5px;margin:0 0 14px;">Identitas ini terhubung ke Bagian 1 dan Bagian 2 — isi dulu sebelum menyimpan salah satu bagian. No. Induk juga dipakai untuk memuat ulang pekerjaanmu jika kamu lanjut di lain waktu, di perangkat/browser yang sama.</p>
+      <p class="muted" style="font-size:12.5px;margin:0 0 14px;">Isi identitasmu untuk Bagian 1 ini. No. Induk dipakai untuk memuat ulang pekerjaanmu jika kamu lanjut di lain waktu, di perangkat/browser yang sama.</p>
       ${state.progressStatus==='found' ? `<div class="saved-badge no-print">✓ Data sebelumnya untuk No. Induk ini ditemukan dan sudah dimuat. Bagian yang sudah pernah disimpan ditandai pada langkah di atas.</div>` : ''}
       ${state.progressStatus==='notfound' ? `<div class="saved-badge no-print" style="background:#F4EADA;color:#8A5A3B;">Belum ada data tersimpan untuk No. Induk ini di perangkat ini — silakan mulai isi dari Bagian 1.</div>` : ''}
       <div class="field">
@@ -337,7 +322,7 @@ function renderBagian1(){
     <div class="btn-row card-bagian1">
       <button class="btn" id="btn-submit-b1">Selesai — Data Tersimpan</button>
       <button class="btn secondary no-print" id="btn-print-b1">Cetak / Simpan PDF (Bagian 1)</button>
-      <button class="btn secondary no-print" id="btn-next">Lanjut ke Bagian 2 →</button>
+      <button class="btn secondary no-print" id="btn-next">Ke Bagian 2 →</button>
     </div>
   `;
   wrap.appendChild(content);
@@ -522,24 +507,10 @@ function renderBagian1(){
     printScoped('print-b1');
   };
   content.querySelector('#btn-next').onclick = ()=>{
-    const identityOk = validateIdentity();
-    const bagian1Ok = validateBagian1Fields();
-    if(!identityOk || !bagian1Ok){
-      alert('Ada kolom wajib yang masih kosong (ditandai garis merah) di Bagian 1. Mohon lengkapi dulu sebelum lanjut ke Bagian 2.');
-      focusFirstInvalid();
-      return;
-    }
     goToScreen('bagian2');
   };
 
-  wrap.prepend(renderStepper(1, ()=>{
-    const ok = validateIdentity() && validateBagian1Fields();
-    if(!ok){
-      alert('Ada kolom wajib yang masih kosong (ditandai garis merah) di Bagian 1. Mohon lengkapi dulu sebelum lanjut ke Bagian 2.');
-      focusFirstInvalid();
-    }
-    return ok;
-  }));
+  wrap.prepend(renderStepper(1));
 
   return wrap;
 }
@@ -557,12 +528,37 @@ function renderBagian2(){
       </p>
     </div>
 
-    <div class="identity-summary no-print">
-      <span><b>${escapeHTML(state.student.nama) || '(nama belum diisi)'}</b></span>
-      <span>No. Induk ${escapeHTML(state.student.noInduk) || '—'}</span>
-      <span>${escapeHTML(state.student.kelas) || '—'}</span>
-      <span>Absen ${escapeHTML(state.student.absen) || '—'}</span>
-      <a id="link-edit-identity">Ubah identitas</a>
+    <div class="card card-identitas">
+      <h3 style="font-size:16px;margin-bottom:4px;">Identitas <span class="q-optional" style="color:var(--accent-ink);background:var(--accent-soft);">Wajib diisi</span></h3>
+      <p class="muted" style="font-size:12.5px;margin:0 0 14px;">Isi identitasmu untuk Bagian 2 ini. Boleh diisi langsung tanpa perlu mengisi Bagian 1 terlebih dahulu.</p>
+      ${state.progressStatus==='found' ? `<div class="saved-badge no-print">✓ Data sebelumnya untuk No. Induk ini ditemukan dan sudah dimuat.</div>` : ''}
+      ${state.progressStatus==='notfound' ? `<div class="saved-badge no-print" style="background:#F4EADA;color:#8A5A3B;">Belum ada data tersimpan untuk No. Induk ini di perangkat ini.</div>` : ''}
+      <div class="field">
+        <label for="f-nama">Nama lengkap</label>
+        <input type="text" id="f-nama" placeholder="Nama sesuai absensi" value="${escapeHTML(state.student.nama)}">
+        <div class="field-error" id="err-nama">Nama wajib diisi.</div>
+      </div>
+      <div class="row3">
+        <div class="field">
+          <label for="f-induk">No. Induk (4 angka)</label>
+          <input type="text" id="f-induk" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="cth. 1045" value="${escapeHTML(state.student.noInduk)}">
+          <div class="field-error" id="err-induk">No. Induk wajib diisi (4 angka).</div>
+        </div>
+        <div class="field">
+          <label for="f-kelas">Kelas</label>
+          <select id="f-kelas">
+            <option value="">Pilih kelas...</option>
+            ${KELAS_OPTIONS.map(k=>`<option value="${k}" ${state.student.kelas===k?'selected':''}>${k}</option>`).join('')}
+          </select>
+          <div class="field-error" id="err-kelas">Kelas wajib dipilih.</div>
+        </div>
+        <div class="field">
+          <label for="f-absen">No. Absen</label>
+          <input type="number" id="f-absen" placeholder="cth. 12" value="${escapeHTML(state.student.absen)}">
+          <div class="field-error" id="err-absen">No. Absen wajib diisi.</div>
+        </div>
+      </div>
+      <button class="btn secondary small no-print" id="btn-load-progress" type="button">Muat Data Tersimpan (berdasarkan No. Induk)</button>
     </div>
 
     <div class="card card-bagian2">
@@ -573,12 +569,44 @@ function renderBagian2(){
     <div class="btn-row card-bagian2">
       <button class="btn" id="btn-submit-b2">Simpan &amp; Lihat Ringkasan (Bagian 2)</button>
       <button class="btn secondary no-print" id="btn-print-b2">Cetak / Simpan PDF (Bagian 2)</button>
-      <button class="btn secondary no-print" id="btn-prev">← Kembali ke Bagian 1</button>
+      <button class="btn secondary no-print" id="btn-prev">← Ke Bagian 1</button>
     </div>
   `;
   wrap.appendChild(content);
 
-  content.querySelector('#link-edit-identity').onclick = ()=>{ goToScreen('bagian1'); };
+  content.querySelector('#f-nama').oninput = e=>{ state.student.nama = e.target.value; markField(e.target,'err-nama',false); };
+  content.querySelector('#f-nama').addEventListener('blur', e=>{ markField(e.target,'err-nama', !state.student.nama.trim()); });
+  content.querySelector('#f-induk').oninput = e=>{
+    const digitsOnly = e.target.value.replace(/\D/g,'').slice(0,4);
+    e.target.value = digitsOnly;
+    state.student.noInduk = digitsOnly;
+    markField(e.target,'err-induk',false);
+  };
+  content.querySelector('#f-kelas').onchange = e=>{ state.student.kelas = e.target.value; markField(e.target,'err-kelas', !e.target.value.trim()); };
+  content.querySelector('#f-absen').oninput = e=>{ state.student.absen = e.target.value; markField(e.target,'err-absen',false); };
+  content.querySelector('#f-absen').addEventListener('blur', e=>{ markField(e.target,'err-absen', !state.student.absen.trim()); });
+
+  function tryLoadProgress(){
+    const noInduk = state.student.noInduk;
+    markField(content.querySelector('#f-induk'), 'err-induk', !/^\d{4}$/.test(noInduk.trim()));
+    if(!noInduk.trim()) return;
+    const data = loadProgress(noInduk);
+    if(data){
+      state.student = data.student || state.student;
+      state.ranks = data.ranks || state.ranks;
+      state.mk = data.mk || state.mk;
+      state.reflections = data.reflections || state.reflections;
+      state.lastResult1 = data.lastResult1 || null;
+      state.lastResult2 = data.lastResult2 || null;
+      state.progressStatus = 'found';
+    } else {
+      state.progressStatus = 'notfound';
+    }
+    render();
+  }
+  content.querySelector('#f-induk').addEventListener('blur', tryLoadProgress);
+  content.querySelector('#btn-load-progress').onclick = tryLoadProgress;
+
   content.querySelector('#btn-prev').onclick = ()=>{ goToScreen('bagian1'); };
 
   const reflBody = content.querySelector('#reflection-body');
@@ -608,6 +636,15 @@ function renderBagian2(){
     if(errEl) errEl.classList.toggle('show', isInvalid);
   }
 
+  function validateIdentity(){
+    let ok = true;
+    if(!state.student.nama.trim()){ markField(content.querySelector('#f-nama'),'err-nama',true); ok = false; } else markField(content.querySelector('#f-nama'),'err-nama',false);
+    if(!/^\d{4}$/.test(state.student.noInduk.trim())){ markField(content.querySelector('#f-induk'),'err-induk',true); ok = false; } else markField(content.querySelector('#f-induk'),'err-induk',false);
+    if(!state.student.kelas.trim()){ markField(content.querySelector('#f-kelas'),'err-kelas',true); ok = false; } else markField(content.querySelector('#f-kelas'),'err-kelas',false);
+    if(!state.student.absen.trim()){ markField(content.querySelector('#f-absen'),'err-absen',true); ok = false; } else markField(content.querySelector('#f-absen'),'err-absen',false);
+    return ok;
+  }
+
   function validateReflections(){
     let ok = true;
     const textareas = content.querySelectorAll('#reflection-body textarea');
@@ -628,13 +665,10 @@ function renderBagian2(){
   content.querySelector('#btn-submit-b2').onclick = async (e)=>{
     const btn = e.currentTarget;
     if(btn.disabled) return;
-    if(!identityValid()){
-      alert('Mohon lengkapi Identitas (nama, No. Induk 4 angka, kelas, dan nomor absen) terlebih dahulu — dibutuhkan untuk Bagian 1 dan Bagian 2.');
-      goToScreen('bagian1');
-      return;
-    }
-    if(!validateReflections()){
-      alert('Ada pertanyaan refleksi wajib yang masih kosong (ditandai garis merah). Mohon lengkapi dulu — kecuali pertanyaan #4 yang boleh dilewati.');
+    const identityOk = validateIdentity();
+    const reflOk = validateReflections();
+    if(!identityOk || !reflOk){
+      alert('Ada kolom wajib yang masih kosong (ditandai garis merah). Mohon lengkapi dulu — kecuali pertanyaan #4 yang boleh dilewati.');
       focusFirstInvalid();
       return;
     }
@@ -651,8 +685,9 @@ function renderBagian2(){
     goToScreen('done2');
   };
   content.querySelector('#btn-print-b2').onclick = ()=>{
-    if(!identityValid()){
+    if(!validateIdentity()){
       alert('Mohon lengkapi Identitas (nama, No. Induk 4 angka, kelas, dan nomor absen) terlebih dahulu.');
+      focusFirstInvalid();
       return;
     }
     printScoped('print-b2');
